@@ -1,8 +1,6 @@
 pipeline {
     // Tells Jenkins to execute this entire pipeline ONLY on the Jenkins Agent machine
-    agent { 
-        label 'JenkinsAgent' 
-    }
+    agent any
 
     environment {
         // Define your Docker Hub or AWS ECR repository credentials and tags

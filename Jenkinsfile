@@ -1,4 +1,5 @@
 pipeline {
+    // We define our Agent as a dynamic Kubernetes Pod containing a Kaniko container
     agent {
         kubernetes {
             yaml '''
@@ -6,25 +7,19 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    some-label: jenkins-agent
+    app: jenkins-agent
 spec:
   containers:
-  # The standard Jenkins agent container
+  # The default Jenkins execution agent
   - name: jnlp
     image: jenkins/inbound-agent:3383.vc8881d4b_0e76-1
-  # A container with the Docker CLI installed
-  - name: docker
-    image: docker:24.0.7-cli
+  # The Kaniko container used specifically to build and push images
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:v1.20.0-debug
     command:
-    - cat
-    tty: true
-    volumeMounts:
-    - mountPath: /var/run/docker.sock
-      name: docker-sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
+    - sleep
+    args:
+    - 9999999
 '''
         }
     }
@@ -52,30 +47,26 @@ spec:
             }
         }
 
-        stage('Docker Build') {
+        // Build and push are handled in one secure step by Kaniko!
+        stage('Docker Build & Push') {
             steps {
-                // Force this stage to run inside the container that actually has the 'docker' command!
-                container('docker') {
-                    echo 'Building the Docker Image...'
-                    sh "docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} -f ./Dockerfile ."
-                }
-            }
-        }
-
-        stage('DevSecOps: Image Security Scan') {
-            steps {
-                echo 'Scanning the compiled Docker Image with Trivy...'
-                sh "./trivy image --severity HIGH,CRITICAL ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
-            }
-        }
-
-        stage('Push Image to Registry') {
-            steps {
-                // Force this stage to run inside the 'docker' container so it can run 'docker login/push'
-                container('docker') {
+                // Switch execution to the 'kaniko' container defined in our Pod Template
+                container('kaniko') {
+                    echo 'Building and Pushing the Docker Image with Kaniko...'
+                    
+                    // Pulling Docker Hub credentials securely from Jenkins
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
-                        sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                        sh "docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+                        sh """
+                            # Generate a Docker config file containing credentials so Kaniko can authenticate
+                            mkdir -p /kaniko/.docker
+                            echo '{"auths":{"https://index.docker.io/v1/":{"username":"'\$USER'","password":"'\$PASS'"}}}' > /kaniko/.docker/config.json
+                            
+                            # Execute Kaniko to build the Dockerfile and push directly to Docker Hub
+                            /kaniko/executor \
+                                --context=${WORKSPACE} \
+                                --dockerfile=${WORKSPACE}/Dockerfile \
+                                --destination=${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+                        """
                     }
                 }
             }

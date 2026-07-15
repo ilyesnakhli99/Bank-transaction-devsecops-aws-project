@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-app-deployment
+  namespace: bank-project
+  labels:
+    app: bank-app
+spec:
+  replicas: 2 # Maintains 2 physical copies of your app for high availability
+  selector:
+    matchLabels:
+      app: bank-app
+  template:
+    metadata:
+      labels:
+        app: bank-app
+    spec:
+      containers:
+      - name: bank-app
+        # This tag format is exactly what your Jenkinsfile 'sed' command looks for!
+        image: ilyesnakhli/Back-transaction-app:1 
+        ports:
+        - containerPort: 5000 # Matches the port exposed in our Dockerfile
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1" # Forces Python to print logs immediately so you can debug in Jenkins
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-app-service
+  namespace: bank-project
+  annotations:
+    # --- AWS LOAD BALANCER CONTROLLER SETTINGS ---
+    # Tells AWS to provision a physical Network Load Balancer (NLB)
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    # Places the physical Load Balancer in your public subnets so it can accept web traffic
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+spec:
+  type: LoadBalancer
+  selector:
+    app: bank-app # Directs traffic only to pods labeled "app: bank-app"
+  ports:
+  - port: 80 # The port public visitors will hit (HTTP)
+    targetPort: 5000 # The port inside your container where Gunicorn is listening

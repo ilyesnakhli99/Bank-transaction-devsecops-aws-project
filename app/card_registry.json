@@ -1,0 +1,30 @@
+[
+  {
+    "card_number": "1111222233334444",
+    "holder": "lina",
+    "secure_code": "123",
+    "status": "ACTIVE",
+    "balance": 46000.0
+  },
+  {
+    "card_number": "5555666677778888",
+    "holder": "Zaza",
+    "secure_code": "456",
+    "status": "ACTIVE",
+    "balance": 7000.0
+  },
+  {
+    "card_number": "1234567812345678",
+    "holder": "ilyes",
+    "secure_code": "000",
+    "status": "ACTIVE",
+    "balance": 12500.0
+  },
+  {
+    "card_number": "0000000000000000",
+    "holder": "Lou",
+    "secure_code": "000",
+    "status": "ACTIVE",
+    "balance": 500.0
+  }
+]

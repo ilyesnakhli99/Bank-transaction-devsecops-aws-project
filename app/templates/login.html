@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AuraPay | SuperOps Auth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center font-sans antialiased">
+    <div class="max-w-md w-full mx-auto p-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl">
+        <div class="text-center mb-8">
+            <div class="inline-block bg-gradient-to-tr from-red-500 to-amber-500 p-3 rounded-2xl text-slate-950 mb-3">
+                <i class="fas fa-user-shield text-2xl"></i>
+            </div>
+            <h2 class="text-xl font-bold text-white">Super Admin Console Auth</h2>
+            <p class="text-xs text-slate-500 mt-1">Authorized Operations Gatehouse Access Only</p>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Root Operator Token ID</label>
+                <input type="text" id="username" placeholder="superadmin" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:outline-none focus:border-red-500" required>
+            </div>
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Secure Passkey</label>
+                <input type="password" id="password" placeholder="••••••••••••" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:outline-none focus:border-red-500" required>
+            </div>
+            <div id="errMsg" class="text-xs text-red-400 hidden text-center font-medium"></div>
+            <button type="submit" class="w-full mt-2 bg-gradient-to-r from-red-500 to-amber-600 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition tracking-wide hover:opacity-90">
+                Decrypt & Authenticate Sesssion
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const errDiv = document.getElementById('errMsg');
+            errDiv.classList.add('hidden');
+            
+            const payload = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            };
+
+            const response = await fetch('/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                window.location.href = result.redirect;
+            } else {
+                errDiv.innerText = result.message;
+                errDiv.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

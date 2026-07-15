@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraPay | Super Admin Terminal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans flex flex-col antialiased">
+
+    <!-- Navbar -->
+    <nav class="border-b border-red-500/20 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-gradient-to-tr from-red-500 to-amber-500 p-2 rounded-xl text-slate-950 shadow-lg shadow-red-500/20">
+                    <i class="fas fa-shield-alt text-xl"></i>
+                </div>
+                <span class="text-xl font-bold tracking-tight text-white">AuraPay <span class="text-red-400 font-light">SuperOps</span></span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="text-xs bg-red-500/10 border border-red-500/20 text-red-400 px-3 py-1 rounded-full font-mono"><i class="fas fa-unlock-alt mr-1"></i> Root Cloud Master</div>
+                <a href="/admin/logout" class="text-xs text-slate-400 hover:text-red-400 transition font-medium"><i class="fas fa-sign-out-alt mr-1"></i>Exit Session</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Provision Panel -->
+        <section class="lg:col-span-4 space-y-6">
+            <div class="glass p-6 rounded-2xl">
+                <h3 class="text-sm font-bold uppercase tracking-wider mb-2 flex items-center text-white"><i class="fas fa-plus-circle text-red-400 mr-2"></i>Provision S3 Registry Account</h3>
+                <p class="text-xs text-slate-400 mb-4">Inject new structural nodes into the distributed storage catalog schema.</p>
+                
+                <form id="addCardForm" class="space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">User Full Name</label>
+                        <input type="text" id="regHolder" placeholder="e.g. Ilyes" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-red-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Card Token String (16 digits)</label>
+                        <input type="text" id="regCardNum" placeholder="4444555566667777" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-red-500" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Secure Pin</label>
+                            <input type="text" id="regCode" placeholder="123" maxlength="3" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-slate-100 focus:outline-none focus:border-red-500" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full mt-2 bg-gradient-to-r from-red-500 to-amber-600 text-slate-950 font-bold py-2 rounded-lg text-xs hover:opacity-90 transition">Commit Asset Node</button>
+                </form>
+            </div>
+
+            <div class="glass p-5 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h4 class="text-xs text-slate-400 font-medium uppercase tracking-wider">Telemetry Pipes Broadcasted</h4>
+                    <p class="text-3xl font-bold font-mono text-red-400 mt-1" id="kpiStreamCount">0</p>
+                </div>
+                <i class="fas fa-network-wired text-3xl text-slate-700"></i>
+            </div>
+        </section>
+
+        <!-- Monitoring Section -->
+        <section class="lg:col-span-8 space-y-6">
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="bg-slate-900/60 px-5 py-3 border-b border-slate-800 flex justify-between items-center">
+                    <span class="text-xs font-bold text-slate-300 tracking-wide flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 animate-ping mr-2"></span>Kafka Operational Feed Pipeline</span>
+                </div>
+                <div class="p-4 max-h-[180px] overflow-y-auto space-y-1 text-[11px] font-mono" id="adminLogFeed">
+                    <div class="text-slate-600 text-center py-4">Awaiting Kafka event broker logs stream...</div>
+                </div>
+            </div>
+
+            <div class="glass rounded-2xl overflow-hidden">
+                <div class="bg-slate-900/60 px-5 py-3 border-b border-slate-800">
+                    <span class="text-xs font-bold text-slate-300 tracking-wide"><i class="fas fa-folder-open text-amber-400 mr-2"></i>Active S3 Cluster File Registry (`card_registry.json`)</span>
+                </div>
+                <div class="overflow-x-auto text-xs">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-900/20 text-slate-400 font-semibold border-b border-slate-800 uppercase tracking-wider text-[10px]">
+                            <tr>
+                                <th class="p-4">Holder Identification</th>
+                                <th class="p-4">Card Identification Number</th>
+                                <th class="p-4 text-right">Available Balance</th>
+                                <th class="p-4 text-center">Status</th>
+                                <th class="p-4 text-center">Actions (CRUD Operations)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registryTableBody" class="divide-y divide-slate-800/40"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- POP-UP MODAL 1: EDIT CREDENTIALS (NOW WITH CARD NUMBER ADJUSTMENTS) -->
+    <div id="editModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="glass p-6 rounded-2xl max-w-sm w-full border border-blue-500/30">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-2"><i class="fas fa-edit text-blue-400 mr-2"></i>Modify Identity Resource Payload</h3>
+            <p class="text-[11px] text-slate-400 mb-4">Overwrite variables securely inside the cloud JSON tracking matrix.</p>
+            <form id="editCardForm" class="space-y-3 text-xs">
+                <!-- Keep track of the index identifier before it gets manipulated by the user -->
+                <input type="hidden" id="editOriginalCardNum">
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Account Holder Name</label>
+                    <input type="text" id="editHolder" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-blue-500 focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Card Identification Number</label>
+                    <input type="text" id="editCardNum" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 font-mono text-slate-100 focus:border-blue-500 focus:outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-[10px] font-semibold text-slate-400 uppercase mb-1">Secure Passkey Pin</label>
+                    <input type="text" id="editCode" maxlength="3" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-slate-100 focus:border-blue-500 focus:outline-none" required>
+                </div>
+                <div class="flex space-x-2 pt-2">
+                    <button type="button" onclick="closeModal('editModal')" class="w-1/2 bg-slate-800 hover:bg-slate-700 font-semibold py-2 rounded-lg text-slate-300">Abort</button>
+                    <button type="submit" class="w-1/2 bg-blue-500 hover:bg-blue-600 font-bold py-2 rounded-lg text-slate-950">Update Core File</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- POP-UP MODAL 2: USER METRIC VIEW -->
+    <div id="viewModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="glass p-6 rounded-2xl max-w-sm w-full border border-purple-500/30">
+            <h3 class="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center"><i class="fas fa-chart-pie text-purple-400 mr-2"></i>Telemetry Metric Summary</h3>
+            <div class="space-y-3 font-mono text-xs">
+                <div class="flex justify-between border-b border-slate-800/60 pb-1">
+                    <span class="text-slate-400">Node Profile:</span><span id="viewHolder" class="text-white font-bold"></span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800/60 pb-1">
+                    <span class="text-slate-400">Mapped Card ID:</span><span id="viewCard" class="text-slate-300"></span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800/60 pb-1">
+                    <span class="text-slate-400">Total Liquid Currency:</span><span id="viewBalance" class="text-emerald-400 font-bold"></span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800/60 pb-1">
+                    <span class="text-slate-400">Processed Outflow (Sent):</span><span id="viewSent" class="text-red-400"></span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800/60 pb-1">
+                    <span class="text-slate-400">Processed Inflow (Recv):</span><span id="viewRecv" class="text-teal-400"></span>
+                </div>
+            </div>
+            <button onclick="closeModal('viewModal')" class="w-full mt-5 bg-slate-800 hover:bg-slate-700 font-semibold py-2 rounded-lg text-xs text-slate-300">Close Data View</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        async function updateLiveStreams() {
+            try {
+                const res = await fetch('/api/transactions');
+                const logs = await res.json();
+                const feed = document.getElementById('adminLogFeed');
+                document.getElementById('kpiStreamCount').innerText = logs.length;
+                if (logs.length === 0) return;
+                feed.innerHTML = '';
+                logs.forEach(tx => {
+                    const line = document.createElement('div');
+                    const isFraud = tx.status === "FRAUD";
+                    line.className = `p-2 rounded border flex justify-between ${isFraud ? 'bg-red-950/40 border-red-900/40 text-red-400' : 'bg-slate-900/40 border-slate-800/60 text-emerald-400'}`;
+                    line.innerHTML = `<span>[LOG] ${tx.sender} (${tx.sender_account.slice(-4)}) ➔ ${tx.recipient} (${tx.recipient_account.slice(-4)}) | $${tx.amount.toLocaleString()}</span><span class="font-bold">[${tx.status}]</span>`;
+                    feed.appendChild(line);
+                });
+            } catch(e){}
+        }
+
+        async function renderRegistryTable() {
+            try {
+                const res = await fetch('/api/registry');
+                const cards = await res.json();
+                const tbody = document.getElementById('registryTableBody');
+                tbody.innerHTML = '';
+                cards.forEach(c => {
+                    const row = document.createElement('tr');
+                    row.className = "hover:bg-slate-900/20";
+                    row.innerHTML = `
+                        <td class="p-4 font-semibold text-slate-200 cursor-pointer text-blue-400 hover:underline" onclick="inspectUserAnalytics('${c.card_number}')"><i class="fas fa-search text-[10px] mr-1.5 text-slate-500"></i>${c.holder}</td>
+                        <td class="p-4 font-mono text-slate-400">${c.card_number}</td>
+                        <td class="p-4 text-right font-mono text-emerald-400 font-semibold">$${parseFloat(c.balance || 0).toLocaleString(undefined,{minimumFractionDigits:2})}</td>
+                        <td class="p-4 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${c.status === 'ACTIVE' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400 animate-pulse'}">${c.status}</span>
+                        </td>
+                        <td class="p-4 flex items-center justify-center space-x-3">
+                            <button onclick="launchEditModal('${c.holder}', '${c.card_number}', '${c.secure_code}')" class="text-blue-400 hover:text-blue-300" title="Modify Card Payload"><i class="fas fa-edit"></i></button>
+                            <button onclick="toggleCardStatus('${c.card_number}')" class="text-amber-400 hover:text-amber-300" title="Toggle Lock State"><i class="fas fa-ban"></i></button>
+                            <button onclick="deleteCardIdentity('${c.card_number}')" class="text-red-500 hover:text-red-400" title="Purge Record Network"><i class="fas fa-trash-alt"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch(e){}
+        }
+
+        function launchEditModal(holder, num, code) {
+            document.getElementById('editOriginalCardNum').value = num;
+            document.getElementById('editCardNum').value = num;
+            document.getElementById('editHolder').value = holder;
+            document.getElementById('editCode').value = code;
+            openModal('editModal');
+        }
+
+        document.getElementById('editCardForm').addEventListener('submit', async function(e){
+            e.preventDefault();
+            const payload = {
+                original_card_number: document.getElementById('editOriginalCardNum').value,
+                card_number: document.getElementById('editCardNum').value,
+                holder: document.getElementById('editHolder').value,
+                secure_code: document.getElementById('editCode').value
+            };
+            const res = await fetch('/api/registry', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) { closeModal('editModal'); renderRegistryTable(); }
+        });
+
+        async function inspectUserAnalytics(cardNum) {
+            const res = await fetch(`/api/user_analytics/${cardNum}`);
+            if(!res.ok) return;
+            const data = await res.json();
+            document.getElementById('viewHolder').innerText = data.holder;
+            document.getElementById('viewCard').innerText = data.card;
+            document.getElementById('viewBalance').innerText = `$${data.current_balance.toLocaleString(undefined,{minimumFractionDigits:2})}`;
+            document.getElementById('viewSent').innerText = `-$${data.total_sent.toLocaleString()}`;
+            document.getElementById('viewRecv').innerText = `+$${data.total_received.toLocaleString()}`;
+            openModal('viewModal');
+        }
+
+        document.getElementById('addCardForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const payload = {
+                holder: document.getElementById('regHolder').value,
+                card_number: document.getElementById('regCardNum').value,
+                secure_code: document.getElementById('regCode').value,
+            };
+            const res = await fetch('/api/registry', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+            if(res.ok) { document.getElementById('addCardForm').reset(); renderRegistryTable(); }
+        });
+
+        async function toggleCardStatus(num) { await fetch(`/api/registry/toggle/${num}`, { method: 'POST' }); renderRegistryTable(); }
+        async function deleteCardIdentity(num) { if(confirm("Confirm security authorization deletion?")) { await fetch(`/api/registry/delete/${num}`, { method: 'DELETE' }); renderRegistryTable(); } }
+
+        setInterval(updateLiveStreams, 2500);
+        setInterval(renderRegistryTable, 4000);
+        updateLiveStreams(); renderRegistryTable();
+    </script>
+</body>
+</html>

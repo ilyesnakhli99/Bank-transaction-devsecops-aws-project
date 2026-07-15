@@ -17,15 +17,15 @@ pipeline {
             }
         }
         stage('DevSecOps: Source Security Scan') {
-    steps {
-        echo 'Installing and Running Trivy Filesystem Vulnerability Scan...'
-        sh '''
-            # Download and install Trivy to a local directory
-            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
+            steps {
+                echo 'Installing and Running Trivy Filesystem Vulnerability Scan...'
+                sh '''
+                # Download and install Trivy to a local directory
+                curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
             
-            # Run the scan using the local binary
-            ./trivy fs --severity HIGH,CRITICAL .
-        '''
+                # Run the scan using the local binary
+                ./trivy fs --severity HIGH,CRITICAL .
+                '''
     }
 }
 

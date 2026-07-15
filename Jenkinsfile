@@ -16,6 +16,18 @@ pipeline {
                 checkout scm
             }
         }
+        stage('DevSecOps: Source Security Scan') {
+    steps {
+        echo 'Installing and Running Trivy Filesystem Vulnerability Scan...'
+        sh '''
+            # Download and install Trivy to a local directory
+            curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b .
+            
+            # Run the scan using the local binary
+            ./trivy fs --severity HIGH,CRITICAL .
+        '''
+    }
+}
 
         // Stage 2: Look inside the source code for hidden vulnerabilities before building
         stage('DevSecOps: Source Security Scan') {
